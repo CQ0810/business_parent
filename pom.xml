@@ -5,12 +5,12 @@
     <!-- 基本信息 -->
     <description>SpringBoot 多模块构建示例</description>
     <modelVersion>4.0.0</modelVersion>
-    <name>springboot-integration</name>
+    <name>business-parent</name>
     <packaging>pom</packaging>
 
     <!-- 项目说明：这里作为聚合工程的父工程 -->
     <groupId>com.tio</groupId>
-    <artifactId>springboot-integration</artifactId>
+    <artifactId>business-parent</artifactId>
     <version>1.0.0.RELEASE</version>
 
     <!-- 继承说明：这里继承SpringBoot提供的父工程 -->
@@ -23,10 +23,9 @@
 
     <!-- 模块说明：这里声明多个子模块 -->
     <modules>
-        <module>biz_test</module>
-        <module>test_java</module>
+        <module>business_core</module>
+        <module>business_project</module>
     </modules>
-
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -52,8 +51,22 @@
         <hutool.version>4.1.19</hutool.version>
     </properties>
 
-    <!-- 版本说明：这里统一管理依赖的版本号 -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.tio</groupId>
+                <artifactId>business-core</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+            <dependency>
+                <groupId>com.tio</groupId>
+                <artifactId>business-project</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
+    <!-- 版本说明：这里统一管理依赖的版本号 -->
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -114,11 +127,6 @@
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
             <version>${mybatis.plus.spring.boot.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
 
         <dependency>
@@ -283,12 +291,20 @@
     <build>
         <plugins>
             <plugin>
-                <configuration>
+                <!-- The plugin rewrites your manifest -->
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration><!-- 指定该Main Class为全局的唯一入口 -->
                     <mainClass>com.tio.Application</mainClass>
                     <layout>ZIP</layout>
                 </configuration>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal><!--可以把依赖的包都打包到生成的Jar包中-->
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
